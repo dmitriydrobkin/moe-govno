@@ -1,0 +1,68 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/**
+ * Базовые стили премиального кондитерского бренда.
+ * Минимализм, много whitespace, тонкие золотые линии.
+ */
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-cream text-chocolate antialiased;
+  }
+
+  ::selection {
+    @apply bg-gold/20 text-chocolate;
+  }
+}
+
+@layer components {
+  /** Тонкая золотая разделительная линия */
+  .divider-gold {
+    @apply h-px w-full bg-gradient-to-r from-transparent via-gold/40 to-transparent;
+  }
+
+  /** Кнопка основного действия */
+  .btn-primary {
+    @apply inline-flex items-center justify-center border border-gold bg-gold px-8 py-3
+      font-sans text-sm uppercase tracking-widest text-chocolate
+      transition-all duration-300 hover:bg-gold-light hover:shadow-lg;
+  }
+
+  /** Кнопка вторичного действия — контурная */
+  .btn-outline {
+    @apply inline-flex items-center justify-center border border-chocolate/20 bg-transparent
+      px-8 py-3 font-sans text-sm uppercase tracking-widest text-chocolate
+      transition-all duration-300 hover:border-gold hover:text-gold;
+  }
+
+  /** Заголовок секции с serif-шрифтом */
+  .section-title {
+    @apply font-serif text-3xl font-light tracking-tight text-chocolate md:text-4xl lg:text-5xl;
+  }
+
+  /** Подзаголовок секции */
+  .section-subtitle {
+    @apply mt-4 max-w-2xl font-sans text-base font-light leading-relaxed text-chocolate/60;
+  }
+}
+
+@layer utilities {
+  /** Задержки для каскадной анимации появления */
+  .animation-delay-100 {
+    animation-delay: 100ms;
+  }
+  .animation-delay-200 {
+    animation-delay: 200ms;
+  }
+  .animation-delay-300 {
+    animation-delay: 300ms;
+  }
+  .animation-delay-400 {
+    animation-delay: 400ms;
+  }
+}
