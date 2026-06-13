@@ -1,15 +1,11 @@
 import { db } from '@/server/db';
 import { siteSettings } from '@/server/db/schema';
 import type { SiteSetting } from '@/server/db/schema';
-import { unstable_noStore as noStore } from 'next/cache';
 
 /**
  * Безопасно загружает динамические настройки сайта из базы D1.
  */
 export async function getSiteSettings(): Promise<Record<string, string>> {
-  // ⚡ Выключаем системный кэш Next.js, чтобы сайт сразу отображал сохраненные данные
-  noStore(); 
-  
   try {
     const rows = await db.select().from(siteSettings);
     
