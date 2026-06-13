@@ -29,7 +29,7 @@ export default async function CatalogPage() {
                   <label className="block text-xs font-sans uppercase tracking-widest text-chocolate/70 mb-2">Название</label>
                   <input
                     type="text"
-                    name="name"
+                    name="title"
                     required
                     className="w-full border border-chocolate/20 px-4 py-3 bg-transparent font-sans text-sm outline-none transition-colors focus:border-gold"
                   />
