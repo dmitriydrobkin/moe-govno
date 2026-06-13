@@ -1,20 +1,26 @@
 import { drizzle } from 'drizzle-orm/d1';
 import * as schema from '@/server/db/schema';
-import { getRequestContext } from '@cloudflare/next-on-pages';
+import { getOptionalRequestContext } from '@cloudflare/next-on-pages';
 
-export const runtime = 'edge';
-
-/**
- * В Cloudflare Pages мы не можем инициализировать D1 глобально.
- * Мы используем Proxy, чтобы при каждом обращении к `db` 
- * Next.js динамически доставал актуальное подключение из контекста запроса.
- */
 export const db = new Proxy({} as any, {
   get(_, prop) {
-    const { env } = getRequestContext();
-    
+    let env;
+    try {
+      // Во время статической сборки (Node.js) контекста нет, ловим ошибку
+      const ctx = getOptionalRequestContext();
+      env = ctx?.env;
+    } catch (e) {
+      env = null;
+    }
+
     if (!env || !env.DB) {
-      throw new Error('⚠️ База данных D1 не найдена в переменных окружения (env.DB)');
+      // Если базы нет (этап сборки страницы 404), отдаем пустышку, чтобы не ронять билд
+      if (prop === 'select') {
+        return () => ({
+          from: () => Promise.resolve([]),
+        });
+      }
+      return () => Promise.resolve();
     }
 
     const client = drizzle(env.DB, { schema });
