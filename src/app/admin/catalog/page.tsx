@@ -60,7 +60,7 @@ export default async function CatalogPage() {
                 <ul className="space-y-3">
                   {categories.map((cat) => (
                     <li key={cat.id} className="text-sm font-sans flex justify-between items-center border-b border-chocolate/10 pb-3">
-                      <span className="font-medium">{cat.name}</span>
+                      <span className="font-medium">{cat.title}</span>
                       <span className="text-chocolate/50 text-xs bg-chocolate/5 px-2 py-1 rounded">/{cat.slug}</span>
                     </li>
                   ))}
