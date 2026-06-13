@@ -9,6 +9,7 @@ export async function getCategories() {
   try {
     return await db.select().from(categories).all();
   } catch (error) {
+    console.error('Ошибка чтения categories:', error);
     return [];
   }
 }
@@ -18,6 +19,7 @@ export async function getProducts() {
   try {
     return await db.select().from(products).all();
   } catch (error) {
+    console.error('Ошибка чтения products:', error);
     return [];
   }
 }
