@@ -8,7 +8,9 @@ import { CategoryCard } from '@/components/CategoryCard';
 import { ProductCard } from '@/components/ProductCard';
 import { getCategories } from '@/server/functions/categories';
 import { getBestsellers } from '@/server/functions/products';
-import { getSiteSettings } from '@/server/functions/settings'; // Подключили нашу функцию
+import { getSiteSettings } from '@/server/functions/settings';
+// ИМПОРТИРУЕМ ТИПЫ ДЛЯ СТРОГОЙ ТИПИЗАЦИИ
+import type { Category, Product } from '@/server/db/schema';
 
 export const runtime = 'edge';
 
@@ -80,7 +82,8 @@ export default async function HomePage() {
         </div>
 
         <div className="mt-16 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {categories.map((category, index) => (
+          {/* ЯВНАЯ ТИПИЗАЦИЯ Category */}
+          {categories.map((category: Category, index: number) => (
             <CategoryCard key={category.id} category={category} index={index} />
           ))}
         </div>
@@ -105,7 +108,8 @@ export default async function HomePage() {
           </div>
 
           <div className="mt-16 grid grid-cols-1 gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
-            {bestsellers.map((product, index) => (
+            {/* ЯВНАЯ ТИПИЗАЦИЯ Product */}
+            {bestsellers.map((product: Product, index: number) => (
               <ProductCard key={product.id} product={product} index={index} />
             ))}
           </div>
