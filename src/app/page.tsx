@@ -8,13 +8,24 @@ import { CategoryCard } from '@/components/CategoryCard';
 import { ProductCard } from '@/components/ProductCard';
 import { getCategories } from '@/server/functions/categories';
 import { getBestsellers } from '@/server/functions/products';
+import { getSiteSettings } from '@/server/functions/settings'; // Подключили нашу функцию
 
 export const runtime = 'edge';
 
+// Стандартные тексты (Fallback), если в базе данных пусто
+const DEFAULT_TEXTS = {
+  hero_badge: 'Maison de Pâtisserie',
+  hero_title_1: 'Искусство',
+  hero_title_italic: 'сладкого',
+  hero_description: 'Каждое изделие — маленький шедевр. Бельгийский шоколад, свежие ягоды и безупречное мастерство.',
+};
+
 export default async function HomePage() {
-  const [categories, bestsellers] = await Promise.all([
+  // Загружаем категории, бестселлеры и настройки сайта параллельно
+  const [categories, bestsellers, settings] = await Promise.all([
     getCategories(),
     getBestsellers(),
+    getSiteSettings(),
   ]);
 
   return (
@@ -33,16 +44,17 @@ export default async function HomePage() {
 
         <div className="relative z-10 mx-auto max-w-4xl px-6 text-center animate-fade-in">
           <p className="font-sans text-xs uppercase tracking-[0.3em] text-gold">
-            Maison de Pâtisserie
+            {settings.hero_badge ?? DEFAULT_TEXTS.hero_badge}
           </p>
           <h1 className="mt-6 font-serif text-5xl font-light leading-tight text-cream md:text-7xl lg:text-8xl">
-            Искусство
+            {settings.hero_title_1 ?? DEFAULT_TEXTS.hero_title_1}
             <br />
-            <span className="italic text-gold">сладкого</span>
+            <span className="italic text-gold">
+              {settings.hero_title_italic ?? DEFAULT_TEXTS.hero_title_italic}
+            </span>
           </h1>
           <p className="mx-auto mt-8 max-w-lg font-sans text-base font-light leading-relaxed text-cream/70">
-            Каждое изделие — маленький шедевр. Бельгийский шоколад, свежие ягоды и
-            безупречное мастерство.
+            {settings.hero_description ?? DEFAULT_TEXTS.hero_description}
           </p>
           <div className="mt-12 flex flex-col items-center justify-center gap-4 sm:flex-row">
             <Link href="/catalog" className="btn-primary">
@@ -108,7 +120,7 @@ export default async function HomePage() {
               Наша философия
             </p>
             <h2 className="section-title mt-4">
-              Три ингредиента
+              Три ingrediента
               <br />
               совершенства
             </h2>
