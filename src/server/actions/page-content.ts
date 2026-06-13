@@ -9,7 +9,10 @@ export async function savePageContent(formData: FormData) {
   const db = drizzle(env.DB);
 
   const pageRoute = formData.get('pageRoute')?.toString();
-  if (!pageRoute) return { error: 'pageRoute is required' };
+  
+  if (!pageRoute) {
+    throw new Error('pageRoute is required'); // ⚡️ Исправили на throw
+  }
 
   const keys = ['h1', 'description', 'seoTitle', 'seoDescription'];
 
