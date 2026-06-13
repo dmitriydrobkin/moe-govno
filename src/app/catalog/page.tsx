@@ -8,7 +8,8 @@ import { ProductCard } from '@/components/ProductCard';
 import { getCategories } from '@/server/functions/categories';
 import { getProducts } from '@/server/functions/products';
 import Link from 'next/link';
-import type { Category } from '@/server/db/schema';
+// ДОБАВИЛИ импорт типа Product
+import type { Category, Product } from '@/server/db/schema';
 
 export const runtime = 'edge';
 
@@ -23,13 +24,11 @@ export default async function CatalogPage({
   const categories = await getCategories();
 
   // 2. Находим нужную категорию по текстовому slug из URL
-  // ДОБАВИЛИ : Category для переменной c
   const currentCategory = categories.find(
     (c: Category) => c.slug === currentCategorySlug
   );
 
   // 3. Запрашиваем товары, передавая ЧИСЛОВОЙ ID категории, а не текст
-  // Если категория не выбрана (currentCategory undefined), передастся undefined и загрузятся все товары
   const products = await getProducts(currentCategory?.id);
 
   return (
@@ -89,7 +88,8 @@ export default async function CatalogPage({
             </div>
           ) : (
             <div className="grid grid-cols-1 gap-x-8 gap-y-12 sm:grid-cols-2 xl:grid-cols-3">
-              {products.map((product, index) => (
+              {/* ВОТ ЗДЕСЬ ДОБАВИЛИ ТИПИЗАЦИЮ: (product: Product, index: number) */}
+              {products.map((product: Product, index: number) => (
                 <ProductCard key={product.id} product={product} index={index} />
               ))}
             </div>
