@@ -7,8 +7,16 @@ import { relations, sql } from 'drizzle-orm';
 import { integer, real, sqliteTable, text } from 'drizzle-orm/sqlite-core';
 
 /**
+ * ТАБЛИЦА НАСТРОЕК: Динамический контент сайта.
+ * Позволяет менять заголовки, контакты и управлять фичами без пересборки проекта.
+ */
+export const siteSettings = sqliteTable('site_settings', {
+  key: text('key').primaryKey(), // Ключ настройки (например, 'hero_title')
+  value: text('value').notNull(), // Значение (текст или флаг)
+});
+
+/**
  * Категории кондитерских изделий (торты, macarons, шоколад и т.д.).
- * slug используется в URL для фильтрации каталога.
  */
 export const categories = sqliteTable('categories', {
   id: integer('id').primaryKey({ autoIncrement: true }),
@@ -19,7 +27,6 @@ export const categories = sqliteTable('categories', {
 
 /**
  * Товары магазина с привязкой к категории.
- * is_bestseller и in_stock хранятся как SQLite INTEGER с mode: 'boolean'.
  */
 export const products = sqliteTable('products', {
   id: integer('id').primaryKey({ autoIncrement: true }),
@@ -27,6 +34,7 @@ export const products = sqliteTable('products', {
     .notNull()
     .references(() => categories.id),
   slug: text('slug').notNull().unique(),
+  sku: text('sku').unique(), // Артикул товара для интеграции с внешними базами и ботом
   title: text('title').notNull(),
   price: real('price').notNull(),
   description: text('description'),
@@ -39,7 +47,6 @@ export const products = sqliteTable('products', {
 
 /**
  * Заказы клиентов с контактными данными и статусом обработки.
- * created_at заполняется автоматически на стороне SQLite.
  */
 export const orders = sqliteTable('orders', {
   id: integer('id').primaryKey({ autoIncrement: true }),
@@ -47,12 +54,13 @@ export const orders = sqliteTable('orders', {
   customerPhone: text('customer_phone').notNull(),
   deliveryAddress: text('delivery_address').notNull(),
   totalPrice: real('total_price').notNull(),
-  status: text('status').notNull().default('pending'),
+  // Статус заказа. Цепочка: 'new' -> 'confirmed' -> 'shipped' -> 'delivered' -> 'cancelled'
+  status: text('status').notNull().default('new'), 
   createdAt: text('created_at').default(sql`CURRENT_TIMESTAMP`),
 });
 
 /**
- * Позиции заказа — связь «заказ ↔ товар» с зафиксированной ценой на момент покупки.
+ * Позиции заказа — связь «заказ ↔ товар».
  */
 export const orderItems = sqliteTable('order_items', {
   id: integer('id').primaryKey({ autoIncrement: true }),
@@ -95,6 +103,7 @@ export const orderItemsRelations = relations(orderItems, ({ one }) => ({
 }));
 
 /** Выводимые типы строк таблиц для использования в компонентах и API */
+export type SiteSetting = typeof siteSettings.$inferSelect;
 export type Category = typeof categories.$inferSelect;
 export type Product = typeof products.$inferSelect;
 export type Order = typeof orders.$inferSelect;
