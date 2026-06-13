@@ -8,7 +8,7 @@ export async function createCategory(formData: FormData) {
   const { env } = getRequestContext();
   const db = drizzle(env.DB);
 
-  const name = formData.get('name')?.toString();
+ const title = formData.get('title')?.toString();
   const slug = formData.get('slug')?.toString();
 
   if (!name || !slug) return { error: 'Name and slug are required' };
