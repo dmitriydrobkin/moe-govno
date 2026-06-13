@@ -1,5 +1,9 @@
 import Link from 'next/link';
 
+// Обязательные строчки для Cloudflare Pages
+export const runtime = 'edge';
+export const dynamic = 'force-dynamic';
+
 export default function NotFound() {
   return (
     <div className="flex min-h-[70vh] flex-col items-center justify-center text-center px-6 bg-cream-dark">
