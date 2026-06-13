@@ -42,15 +42,17 @@ export const categories = sqliteTable('categories', {
 export const products = sqliteTable('products', {
   id: integer('id').primaryKey({ autoIncrement: true }),
   categoryId: integer('category_id').notNull().references(() => categories.id),
-  slug: text('slug').notNull().unique(), // Вернули для красивых URL
-  sku: text('sku').unique(), // Артикул
+  slug: text('slug').notNull().unique(), 
+  sku: text('sku').unique(), 
   title: text('title').notNull(),
-  price: integer('price').notNull(), // Цена в копейках
+  price: integer('price').notNull(), 
   oldPrice: integer('old_price'),
   description: text('description'),
   weightInfo: text('weight_info'),
   ingredients: text('ingredients'),
   imageUrl: text('image_url'),
+  isBestseller: integer('is_bestseller', { mode: 'boolean' }).notNull().default(false), // ⚡️ ВЕРНУЛИ
+  inStock: integer('in_stock', { mode: 'boolean' }).notNull().default(true), // ⚡️ ВЕРНУЛИ
   status: text('status').notNull().default('in_stock'),
 });
 
