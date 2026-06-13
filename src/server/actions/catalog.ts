@@ -1,9 +1,10 @@
 'use server';
+
 import { getRequestContext } from '@cloudflare/next-on-pages';
 import { drizzle } from 'drizzle-orm/d1';
 import { categories, products } from '@/server/db/schema';
 
-export const runtime = 'edge';
+// ❌ УДАЛИЛИ export const runtime = 'edge';
 
 export async function createCategory(formData: FormData) {
   const { env } = getRequestContext();
@@ -13,7 +14,7 @@ export async function createCategory(formData: FormData) {
   const slug = formData.get('slug')?.toString();
 
   if (!title || !slug) {
-    throw new Error('Title and slug are required'); // ⚡️ Исправили на throw
+    throw new Error('Title and slug are required');
   }
 
   await db.insert(categories).values({
@@ -35,14 +36,11 @@ export async function createProduct(formData: FormData) {
   const ingredients = formData.get('ingredients')?.toString();
 
   if (!title || !sku || !priceStr || !categoryIdStr) {
-    throw new Error('Title, sku, price, and category are required'); // ⚡️ Исправили на throw
+    throw new Error('Title, sku, price, and category are required');
   }
 
-  // Конвертация из гривен в копейки
   const price = Math.round(parseFloat(priceStr) * 100);
   const categoryId = parseInt(categoryIdStr, 10);
-  
-  // Генерируем уникальную ссылку (slug) на основе артикула
   const slug = `p-${sku.toLowerCase()}-${Date.now()}`;
 
   await db.insert(products).values({

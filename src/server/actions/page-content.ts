@@ -1,9 +1,10 @@
 'use server';
+
 import { getRequestContext } from '@cloudflare/next-on-pages';
 import { drizzle } from 'drizzle-orm/d1';
 import { pageContent } from '@/server/db/schema';
 
-export const runtime = 'edge';
+// ❌ УДАЛИЛИ export const runtime = 'edge';
 
 export async function savePageContent(formData: FormData) {
   const { env } = getRequestContext();
@@ -12,7 +13,7 @@ export async function savePageContent(formData: FormData) {
   const pageRoute = formData.get('pageRoute')?.toString();
   
   if (!pageRoute) {
-    throw new Error('pageRoute is required'); // ⚡️ Исправили на throw
+    throw new Error('pageRoute is required');
   }
 
   const keys = ['h1', 'description', 'seoTitle', 'seoDescription'];
