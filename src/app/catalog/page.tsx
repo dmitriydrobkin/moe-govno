@@ -1,90 +1,100 @@
 /**
- * Страница каталога с фильтрацией по категориям через searchParams.
- * Адаптивная сетка: 1 колонка (mobile) → 3 колонки (desktop).
+ * Страница каталога.
+ * Демонстрирует использование searchParams для фильтрации данных
+ * на стороне сервера перед рендерингом (Server Components).
  */
 
-import Link from 'next/link';
 import { ProductCard } from '@/components/ProductCard';
-import { getCategories, getCategoryBySlug } from '@/server/functions/categories';
+import { getCategories } from '@/server/functions/categories';
 import { getProducts } from '@/server/functions/products';
+import Link from 'next/link';
+// ИМПОРТИРУЕМ ТИП КАТЕГОРИИ
+import type { Category } from '@/server/db/schema';
 
 export const runtime = 'edge';
 
-interface CatalogPageProps {
+export default async function CatalogPage({
+  searchParams,
+}: {
   searchParams: { category?: string };
-}
+}) {
+  const currentCategorySlug = searchParams.category;
 
-export default async function CatalogPage({ searchParams }: CatalogPageProps) {
-  const categorySlug = searchParams.category;
+  // Запрашиваем данные параллельно для ускорения загрузки
+  const [categories, products] = await Promise.all([
+    getCategories(),
+    getProducts(currentCategorySlug),
+  ]);
 
-  const categories = await getCategories();
-  const activeCategory = categorySlug
-    ? await getCategoryBySlug(categorySlug)
-    : null;
-
-  const products = await getProducts(activeCategory?.id);
+  const currentCategory = categories.find(
+    (c) => c.slug === currentCategorySlug
+  );
 
   return (
     <div className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
       {/* Заголовок каталога */}
-      <div className="text-center">
-        <h1 className="section-title">Каталог</h1>
-        <p className="section-subtitle mx-auto">
-          {activeCategory
-            ? activeCategory.description ?? activeCategory.title
-            : 'Полная коллекция изысканных кондитерских изделий'}
-        </p>
+      <div className="mb-12">
+        <h1 className="font-serif text-4xl text-chocolate md:text-5xl">
+          {currentCategory ? currentCategory.title : 'Весь каталог'}
+        </h1>
+        {currentCategory?.description && (
+          <p className="mt-4 font-sans text-sm font-light text-chocolate/70">
+            {currentCategory.description}
+          </p>
+        )}
       </div>
 
-      {/* Фильтры по категориям */}
-      <nav
-        className="mt-12 flex flex-wrap items-center justify-center gap-3"
-        aria-label="Фильтр по категориям"
-      >
-        <Link
-          href="/catalog"
-          className={`border px-5 py-2 font-sans text-xs uppercase tracking-widest transition-all duration-300 ${
-            !categorySlug
-              ? 'border-gold bg-gold text-chocolate'
-              : 'border-chocolate/20 text-chocolate/60 hover:border-gold hover:text-gold'
-          }`}
-        >
-          Все
-        </Link>
-        {categories.map((cat) => (
-          <Link
-            key={cat.id}
-            href={`/catalog?category=${cat.slug}`}
-            className={`border px-5 py-2 font-sans text-xs uppercase tracking-widest transition-all duration-300 ${
-              categorySlug === cat.slug
-                ? 'border-gold bg-gold text-chocolate'
-                : 'border-chocolate/20 text-chocolate/60 hover:border-gold hover:text-gold'
-            }`}
-          >
-            {cat.title}
-          </Link>
-        ))}
-      </nav>
+      <div className="flex flex-col gap-12 lg:flex-row">
+        {/* Боковая панель с категориями (Фильтры) */}
+        <aside className="lg:w-64">
+          <h3 className="font-sans text-xs uppercase tracking-[0.2em] text-gold">
+            Коллекции
+          </h3>
+          <nav className="mt-6 flex flex-col gap-3">
+            <Link
+              href="/catalog"
+              className={`font-sans text-sm transition-colors ${
+                !currentCategorySlug
+                  ? 'text-chocolate font-medium'
+                  : 'text-chocolate/60 hover:text-chocolate'
+              }`}
+            >
+              Все
+            </Link>
+            {/* ЯВНО УКАЗЫВАЕМ ТИП Category ДЛЯ ПЕРЕМЕННОЙ cat */}
+            {categories.map((cat: Category) => (
+              <Link
+                key={cat.id}
+                href={`/catalog?category=${cat.slug}`}
+                className={`font-sans text-sm transition-colors ${
+                  currentCategorySlug === cat.slug
+                    ? 'text-chocolate font-medium'
+                    : 'text-chocolate/60 hover:text-chocolate'
+                }`}
+              >
+                {cat.title}
+              </Link>
+            ))}
+          </nav>
+        </aside>
 
-      <div className="divider-gold mx-auto my-12 max-w-md" />
-
-      {/* Сетка товаров или пустое состояние */}
-      {products.length > 0 ? (
-        <div className="grid grid-cols-1 gap-x-8 gap-y-12 sm:grid-cols-2 lg:grid-cols-3">
-          {products.map((product, index) => (
-            <ProductCard key={product.id} product={product} index={index} />
-          ))}
+        {/* Сетка товаров */}
+        <div className="flex-1">
+          {products.length === 0 ? (
+            <div className="flex h-64 items-center justify-center border border-dashed border-chocolate/20">
+              <p className="font-sans text-sm text-chocolate/50">
+                В этой категории пока нет товаров.
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 gap-x-8 gap-y-12 sm:grid-cols-2 xl:grid-cols-3">
+              {products.map((product, index) => (
+                <ProductCard key={product.id} product={product} index={index} />
+              ))}
+            </div>
+          )}
         </div>
-      ) : (
-        <div className="py-24 text-center">
-          <p className="font-serif text-2xl text-chocolate/60">
-            В этой категории пока нет товаров
-          </p>
-          <Link href="/catalog" className="btn-outline mt-8 inline-flex">
-            Смотреть все
-          </Link>
-        </div>
-      )}
+      </div>
     </div>
   );
 }
