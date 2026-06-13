@@ -8,7 +8,6 @@ import { ProductCard } from '@/components/ProductCard';
 import { getCategories } from '@/server/functions/categories';
 import { getProducts } from '@/server/functions/products';
 import Link from 'next/link';
-// ИМПОРТИРУЕМ ТИП КАТЕГОРИИ
 import type { Category } from '@/server/db/schema';
 
 export const runtime = 'edge';
@@ -20,15 +19,17 @@ export default async function CatalogPage({
 }) {
   const currentCategorySlug = searchParams.category;
 
-  // Запрашиваем данные параллельно для ускорения загрузки
-  const [categories, products] = await Promise.all([
-    getCategories(),
-    getProducts(currentCategorySlug),
-  ]);
+  // 1. Сначала загружаем категории
+  const categories = await getCategories();
 
+  // 2. Находим нужную категорию по текстовому slug из URL
   const currentCategory = categories.find(
     (c) => c.slug === currentCategorySlug
   );
+
+  // 3. Запрашиваем товары, передавая ЧИСЛОВОЙ ID категории, а не текст
+  // Если категория не выбрана (currentCategory undefined), передастся undefined и загрузятся все товары
+  const products = await getProducts(currentCategory?.id);
 
   return (
     <div className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
@@ -61,7 +62,6 @@ export default async function CatalogPage({
             >
               Все
             </Link>
-            {/* ЯВНО УКАЗЫВАЕМ ТИП Category ДЛЯ ПЕРЕМЕННОЙ cat */}
             {categories.map((cat: Category) => (
               <Link
                 key={cat.id}
