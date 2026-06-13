@@ -22,36 +22,48 @@ export default async function CatalogPage() {
         
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* ================= ЛЕВАЯ КОЛОНКА: КАТЕГОРИИ ================= */}
-          <div className="lg:col-span-1 space-y-8">
-            <div className="bg-cream p-8 shadow-sm border border-chocolate/5">
-              <h2 className="font-serif text-xl mb-6">Новая категория</h2>
-              <form action={createCategory} className="space-y-6">
-                <div>
-                  <label className="block text-xs font-sans uppercase tracking-widest text-chocolate/70 mb-2">Название</label>
-                  <input
-                    type="text"
-                    name="title"
-                    required
-                    className="w-full border border-chocolate/20 px-4 py-3 bg-transparent font-sans text-sm outline-none transition-colors focus:border-gold"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-sans uppercase tracking-widest text-chocolate/70 mb-2">Slug (URL)</label>
-                  <input
-                    type="text"
-                    name="slug"
-                    required
-                    className="w-full border border-chocolate/20 px-4 py-3 bg-transparent font-sans text-sm outline-none transition-colors focus:border-gold"
-                  />
-                </div>
-                <SubmitButton
-                  defaultText="Добавить категорию"
-                  loadingText="Добавление..."
-                  successText="Создано!"
-                  className="btn-primary w-full mt-2"
-                />
-              </form>
-            </div>
+         <div className="bg-cream p-8 shadow-sm border border-chocolate/5">
+  <h2 className="font-serif text-xl mb-6">Новая категория</h2>
+  <form action={createCategory} className="space-y-6">
+    <div>
+      <label className="block text-xs font-sans uppercase tracking-widest text-chocolate/70 mb-1">
+        Название категории
+      </label>
+      <input
+        type="text"
+        name="title"
+        required
+        placeholder="Например: Авторские торты"
+        className="w-full border border-chocolate/20 px-4 py-3 bg-transparent font-sans text-sm outline-none transition-colors focus:border-gold"
+      />
+    </div>
+    
+    <div>
+      <label className="block text-xs font-sans uppercase tracking-widest text-chocolate/70 mb-1">
+        Ссылка для сайта (Slug / URL)
+      </label>
+      <input
+        type="text"
+        name="slug"
+        required
+        placeholder="Например: torty"
+        pattern="^[a-z0-9-]+$"
+        title="Используйте только маленькие латинские буквы, цифры и дефис"
+        className="w-full border border-chocolate/20 px-4 py-3 bg-transparent font-sans text-sm outline-none transition-colors focus:border-gold"
+      />
+      <p className="mt-1 text-[11px] font-sans text-chocolate/50 leading-normal">
+        * Часть адреса страницы. Пишется <strong>строго латиницей</strong>, без пробелов (вместо пробелов используйте дефис).
+      </p>
+    </div>
+    
+    <SubmitButton
+      defaultText="Добавить категорию"
+      loadingText="Добавление..."
+      successText="Создано!"
+      className="btn-primary w-full mt-2"
+    />
+  </form>
+</div>
 
             <div className="bg-cream p-8 shadow-sm border border-chocolate/5">
               <h2 className="font-serif text-xl mb-4">Существующие категории</h2>
