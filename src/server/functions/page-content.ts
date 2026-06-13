@@ -20,7 +20,8 @@ export async function getPageContent(route: string) {
     
     return contentMap;
   } catch (error) {
-    // Безопасный фоллбэк во время сборки
+    console.error('Ошибка чтения pageContent:', error);
+    // Безопасный возврат пустого объекта, чтобы страница не падала
     return {};
   }
 }
