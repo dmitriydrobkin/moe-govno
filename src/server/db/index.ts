@@ -14,7 +14,7 @@ export const db = new Proxy({} as any, {
     }
 
     if (!env || !env.DB) {
-      // Если базы нет (этап сборки страницы 404), отдаем пустышку, чтобы не ронять билд
+      // Если базы нет (этап сборки страницы), отдаем пустышку, чтобы не ронять билд
       if (prop === 'select') {
         return () => ({
           from: () => Promise.resolve([]),
@@ -24,6 +24,9 @@ export const db = new Proxy({} as any, {
     }
 
     const client = drizzle(env.DB, { schema });
-    return (client as any)[prop];
+    const value = (client as any)[prop];
+    
+    // ⚡ КРИТИЧНО ДЛЯ СОХРАНЕНИЯ: Привязываем контекст (this) для функций записи (insert, update)
+    return typeof value === 'function' ? value.bind(client) : value;
   },
 });
