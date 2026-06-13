@@ -1,8 +1,5 @@
 import Link from 'next/link';
 
-// ⚡ ВОТ ОНА! Мы обязаны написать это прямо здесь, иначе Cloudflare не поверит.
-export const runtime = 'edge';
-
 export default function NotFound() {
   return (
     <div className="flex min-h-[70vh] flex-col items-center justify-center text-center px-6 bg-cream-dark">
