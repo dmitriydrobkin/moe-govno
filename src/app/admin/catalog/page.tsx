@@ -1,6 +1,7 @@
 import { SubmitButton } from '@/components/SubmitButton';
 import { createCategory, createProduct } from '@/server/actions/catalog';
 import { getCategories, getProducts } from '@/server/functions/catalog';
+import type { Category, Product } from '@/server/db/schema'; // ⚡️ Добавили импорт типов
 
 export const runtime = 'edge';
 
@@ -58,7 +59,8 @@ export default async function CatalogPage() {
                 <p className="text-sm text-chocolate/60">Категорий пока нет</p>
               ) : (
                 <ul className="space-y-3">
-                  {categories.map((cat) => (
+                  {/* ⚡️ Указали тип (cat: Category) и заменили .name на .title */}
+                  {categories.map((cat: Category) => (
                     <li key={cat.id} className="text-sm font-sans flex justify-between items-center border-b border-chocolate/10 pb-3">
                       <span className="font-medium">{cat.title}</span>
                       <span className="text-chocolate/50 text-xs bg-chocolate/5 px-2 py-1 rounded">/{cat.slug}</span>
@@ -104,8 +106,9 @@ export default async function CatalogPage() {
                       className="w-full border border-chocolate/20 px-4 py-3 bg-cream font-sans text-sm outline-none transition-colors focus:border-gold"
                     >
                       <option value="">Выберите категорию...</option>
-                      {categories.map((cat) => (
-                         <option key={cat.id} value={cat.id}>{cat.name}</option>
+                      {/* ⚡️ Указали тип (cat: Category) */}
+                      {categories.map((cat: Category) => (
+                         <option key={cat.id} value={cat.id}>{cat.title}</option>
                       ))}
                     </select>
                   </div>
@@ -181,13 +184,14 @@ export default async function CatalogPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {products.map((prod) => {
-                    const catName = categories.find(c => c.id === prod.categoryId)?.name || 'Неизвестно';
+                  {/* ⚡️ Указали типы (prod: Product) и (c: Category) */}
+                  {products.map((prod: Product) => {
+                    const catTitle = categories.find((c: Category) => c.id === prod.categoryId)?.title || 'Неизвестно';
                     return (
                       <tr key={prod.id} className="border-b border-chocolate/5 hover:bg-chocolate/5 transition-colors">
                         <td className="py-4 px-2 text-chocolate/70">{prod.sku}</td>
                         <td className="py-4 px-2 font-medium">{prod.title}</td>
-                        <td className="py-4 px-2 text-chocolate/70">{catName}</td>
+                        <td className="py-4 px-2 text-chocolate/70">{catTitle}</td>
                         <td className="py-4 px-2 text-right">{(prod.price / 100).toFixed(2)} ₴</td>
                       </tr>
                     )
