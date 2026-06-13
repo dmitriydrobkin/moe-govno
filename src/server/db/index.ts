@@ -4,14 +4,20 @@ import { getRequestContext } from '@cloudflare/next-on-pages';
 
 export const runtime = 'edge';
 
-function initDbConnection() {
-  if (process.env.NODE_ENV === 'development') {
+/**
+ * В Cloudflare Pages мы не можем инициализировать D1 глобально.
+ * Мы используем Proxy, чтобы при каждом обращении к `db` 
+ * Next.js динамически доставал актуальное подключение из контекста запроса.
+ */
+export const db = new Proxy({} as any, {
+  get(_, prop) {
     const { env } = getRequestContext();
+    
+    if (!env || !env.DB) {
+      throw new Error('⚠️ База данных D1 не найдена в переменных окружения (env.DB)');
+    }
 
-    return drizzle(env.DB, { schema });
-  }
-
-  return drizzle(process.env.DB as unknown as D1Database, { schema });
-}
-
-export const db = initDbConnection();
+    const client = drizzle(env.DB, { schema });
+    return (client as any)[prop];
+  },
+});
