@@ -8,13 +8,15 @@ export async function createCategory(formData: FormData) {
   const { env } = getRequestContext();
   const db = drizzle(env.DB);
 
- const title = formData.get('title')?.toString();
+  const title = formData.get('title')?.toString();
   const slug = formData.get('slug')?.toString();
 
-  if (!name || !slug) return { error: 'Name and slug are required' };
+  if (!title || !slug) {
+    throw new Error('Title and slug are required'); // ⚡️ Исправили на throw
+  }
 
   await db.insert(categories).values({
-    name,
+    title,
     slug,
   });
 }
@@ -32,20 +34,20 @@ export async function createProduct(formData: FormData) {
   const ingredients = formData.get('ingredients')?.toString();
 
   if (!title || !sku || !priceStr || !categoryIdStr) {
-    return { error: 'Title, sku, price, and category are required' };
+    throw new Error('Title, sku, price, and category are required'); // ⚡️ Исправили на throw
   }
 
   // Конвертация из гривен в копейки
   const price = Math.round(parseFloat(priceStr) * 100);
   const categoryId = parseInt(categoryIdStr, 10);
   
-  // ⚡️ Генерируем уникальную ссылку (slug) на основе артикула
+  // Генерируем уникальную ссылку (slug) на основе артикула
   const slug = `p-${sku.toLowerCase()}-${Date.now()}`;
 
   await db.insert(products).values({
     title,
     sku,
-    slug, // ⚡️ Передаем сгенерированный slug в базу
+    slug,
     price,
     categoryId,
     description: description || null,
