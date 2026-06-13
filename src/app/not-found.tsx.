@@ -1,0 +1,22 @@
+import Link from 'next/link';
+
+// Обязательная строчка, чтобы Cloudflare не пытался собирать это в Node.js
+export const runtime = 'edge';
+
+export default function NotFound() {
+  return (
+    <div className="flex min-h-[70vh] flex-col items-center justify-center text-center px-6 bg-cream-dark">
+      <p className="font-sans text-xs uppercase tracking-[0.3em] text-gold mb-2">
+        Maison de Pâtisserie
+      </p>
+      <h2 className="font-serif text-8xl text-chocolate mb-4 font-light">404</h2>
+      <div className="divider-gold my-4 max-w-xs mx-auto opacity-50" />
+      <p className="font-sans text-base text-chocolate/70 mb-10 max-w-md">
+        Кажется, эта страница исчезла... так же быстро, как свежий шоколадный круассан.
+      </p>
+      <Link href="/" className="btn-outline">
+        Вернуться на главную
+      </Link>
+    </div>
+  );
+}
