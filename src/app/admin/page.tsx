@@ -5,6 +5,7 @@
 
 import { getSiteSettings } from '@/server/functions/settings';
 import { updateSiteSettings } from '@/server/actions/settings';
+import { SubmitButton } from '@/components/SubmitButton'; // Подключаем нашу умную кнопку
 
 export const runtime = 'edge';
 
@@ -67,9 +68,13 @@ export default async function AdminPage() {
             </label>
           </div>
 
-          <button type="submit" className="btn-primary w-full mt-8">
-            Сохранить настройки
-          </button>
+          {/* Наша новая умная кнопка с сохранением твоих стилей */}
+          <SubmitButton 
+            defaultText="Сохранить настройки"
+            loadingText="Сохраняем..."
+            successText="Настройки обновлены!"
+            className="btn-primary w-full mt-8"
+          />
         </form>
       </div>
     </div>
