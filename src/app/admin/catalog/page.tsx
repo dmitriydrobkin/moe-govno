@@ -1,7 +1,7 @@
 import { SubmitButton } from '@/components/SubmitButton';
 import { createCategory, createProduct } from '@/server/actions/catalog';
 import { getCategories, getProducts } from '@/server/functions/catalog';
-import type { Category, Product } from '@/server/db/schema'; // ⚡️ Добавили импорт типов
+import type { Category, Product } from '@/server/db/schema';
 
 export const runtime = 'edge';
 
@@ -22,48 +22,49 @@ export default async function CatalogPage() {
         
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* ================= ЛЕВАЯ КОЛОНКА: КАТЕГОРИИ ================= */}
-         <div className="bg-cream p-8 shadow-sm border border-chocolate/5">
-  <h2 className="font-serif text-xl mb-6">Новая категория</h2>
-  <form action={createCategory} className="space-y-6">
-    <div>
-      <label className="block text-xs font-sans uppercase tracking-widest text-chocolate/70 mb-1">
-        Название категории
-      </label>
-      <input
-        type="text"
-        name="title"
-        required
-        placeholder="Например: Авторские торты"
-        className="w-full border border-chocolate/20 px-4 py-3 bg-transparent font-sans text-sm outline-none transition-colors focus:border-gold"
-      />
-    </div>
-    
-    <div>
-      <label className="block text-xs font-sans uppercase tracking-widest text-chocolate/70 mb-1">
-        Ссылка для сайта (Slug / URL)
-      </label>
-      <input
-        type="text"
-        name="slug"
-        required
-        placeholder="Например: torty"
-        pattern="^[a-z0-9-]+$"
-        title="Используйте только маленькие латинские буквы, цифры и дефис"
-        className="w-full border border-chocolate/20 px-4 py-3 bg-transparent font-sans text-sm outline-none transition-colors focus:border-gold"
-      />
-      <p className="mt-1 text-[11px] font-sans text-chocolate/50 leading-normal">
-        * Часть адреса страницы. Пишется <strong>строго латиницей</strong>, без пробелов (вместо пробелов используйте дефис).
-      </p>
-    </div>
-    
-    <SubmitButton
-      defaultText="Добавить категорию"
-      loadingText="Добавление..."
-      successText="Создано!"
-      className="btn-primary w-full mt-2"
-    />
-  </form>
-</div>
+          <div className="lg:col-span-1 space-y-8">
+            <div className="bg-cream p-8 shadow-sm border border-chocolate/5">
+              <h2 className="font-serif text-xl mb-6">Новая категория</h2>
+              <form action={createCategory} className="space-y-6">
+                <div>
+                  <label className="block text-xs font-sans uppercase tracking-widest text-chocolate/70 mb-1">
+                    Название категории
+                  </label>
+                  <input
+                    type="text"
+                    name="title"
+                    required
+                    placeholder="Например: Авторские торты"
+                    className="w-full border border-chocolate/20 px-4 py-3 bg-transparent font-sans text-sm outline-none transition-colors focus:border-gold"
+                  />
+                </div>
+                
+                <div>
+                  <label className="block text-xs font-sans uppercase tracking-widest text-chocolate/70 mb-1">
+                    Ссылка для сайта (Slug / URL)
+                  </label>
+                  <input
+                    type="text"
+                    name="slug"
+                    required
+                    placeholder="Например: torty"
+                    pattern="^[a-z0-9-]+$"
+                    title="Используйте только маленькие латинские буквы, цифры и дефис"
+                    className="w-full border border-chocolate/20 px-4 py-3 bg-transparent font-sans text-sm outline-none transition-colors focus:border-gold"
+                  />
+                  <p className="mt-1 text-[11px] font-sans text-chocolate/50 leading-normal">
+                    * Часть адреса страницы. Пишется <strong>строго латиницей</strong>, без пробелов (вместо пробелов используйте дефис).
+                  </p>
+                </div>
+                
+                <SubmitButton
+                  defaultText="Добавить категорию"
+                  loadingText="Добавление..."
+                  successText="Создано!"
+                  className="btn-primary w-full mt-2"
+                />
+              </form>
+            </div>
 
             <div className="bg-cream p-8 shadow-sm border border-chocolate/5">
               <h2 className="font-serif text-xl mb-4">Существующие категории</h2>
@@ -71,7 +72,6 @@ export default async function CatalogPage() {
                 <p className="text-sm text-chocolate/60">Категорий пока нет</p>
               ) : (
                 <ul className="space-y-3">
-                  {/* ⚡️ Указали тип (cat: Category) и заменили .name на .title */}
                   {categories.map((cat: Category) => (
                     <li key={cat.id} className="text-sm font-sans flex justify-between items-center border-b border-chocolate/10 pb-3">
                       <span className="font-medium">{cat.title}</span>
@@ -118,7 +118,6 @@ export default async function CatalogPage() {
                       className="w-full border border-chocolate/20 px-4 py-3 bg-cream font-sans text-sm outline-none transition-colors focus:border-gold"
                     >
                       <option value="">Выберите категорию...</option>
-                      {/* ⚡️ Указали тип (cat: Category) */}
                       {categories.map((cat: Category) => (
                          <option key={cat.id} value={cat.id}>{cat.title}</option>
                       ))}
@@ -196,7 +195,6 @@ export default async function CatalogPage() {
                   </tr>
                 </thead>
                 <tbody>
-                  {/* ⚡️ Указали типы (prod: Product) и (c: Category) */}
                   {products.map((prod: Product) => {
                     const catTitle = categories.find((c: Category) => c.id === prod.categoryId)?.title || 'Неизвестно';
                     return (
