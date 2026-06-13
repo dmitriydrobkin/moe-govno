@@ -32,7 +32,7 @@ export const pageContent = sqliteTable('page_content', {
 export const categories = sqliteTable('categories', {
   id: integer('id').primaryKey({ autoIncrement: true }),
   slug: text('slug').notNull().unique(),
-  name: text('name').notNull(),
+  title: text('title').notNull(), 
   description: text('description'),
 });
 
