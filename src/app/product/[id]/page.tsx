@@ -10,6 +10,8 @@ import { AddToCartSection } from '@/components/AddToCartButton';
 import { getProductById } from '@/server/functions/products';
 import { getCategories } from '@/server/functions/categories';
 import { formatPrice, getProductImageUrl } from '@/lib/format';
+// ИМПОРТИРУЕМ ТИП Category ДЛЯ СТРОГОЙ ТИПИЗАЦИИ
+import type { Category } from '@/server/db/schema';
 
 export const runtime = 'edge';
 
@@ -34,7 +36,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
     notFound();
   }
 
-  const category = categories.find((c) => c.id === product.categoryId);
+  // ЯВНО УКАЗЫВАЕМ ТИП (c: Category)
+  const category = categories.find((c: Category) => c.id === product.categoryId);
   const imageUrl = getProductImageUrl(product.imageUrl);
 
   return (
