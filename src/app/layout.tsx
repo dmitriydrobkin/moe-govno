@@ -1,18 +1,8 @@
-/**
- * Твой оригинальный layout с сохранением всех импортов и логики.
- * Добавлена защита Cloudflare для корректной сборки.
- */
-
-// --- ОБЯЗАТЕЛЬНЫЕ ДИРЕКТИВЫ ДЛЯ CLOUDFLARE ---
-export const runtime = 'edge';
-export const dynamic = 'force-dynamic';
-// ----------------------------------------------
-
 import type { Metadata } from 'next';
 import { Inter, Playfair_Display } from 'next/font/google';
 import { Header } from '@/components/Header';
 import { getSiteSettings } from '@/server/functions/settings';
-import { CartSlideOver } from '@/components/CartSlideOver'; // Твой оригинальный импорт
+import { CartSlideOver } from '@/components/CartSlideOver'; 
 import './globals.css';
 
 const playfair = Playfair_Display({
@@ -56,7 +46,7 @@ export default async function RootLayout({
     <html lang="ru" className={`${playfair.variable} ${inter.variable}`}>
       <body className="font-sans">
         <Header />
-        {/* Твой оригинальный компонент корзины, который мы случайно могли убрать */}
+        {/* Компонент корзины на месте */}
         <CartSlideOver /> 
         
         <main>{children}</main>
