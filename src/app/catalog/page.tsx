@@ -23,8 +23,9 @@ export default async function CatalogPage({
   const categories = await getCategories();
 
   // 2. Находим нужную категорию по текстовому slug из URL
+  // ДОБАВИЛИ : Category для переменной c
   const currentCategory = categories.find(
-    (c) => c.slug === currentCategorySlug
+    (c: Category) => c.slug === currentCategorySlug
   );
 
   // 3. Запрашиваем товары, передавая ЧИСЛОВОЙ ID категории, а не текст
