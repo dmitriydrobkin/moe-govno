@@ -5,6 +5,9 @@ import { getSiteSettings } from '@/server/functions/settings';
 import { CartSlideOver } from '@/components/CartSlideOver'; 
 import './globals.css';
 
+// ⚡ ВОТ ОНА! Спасительная строчка, которая скажет Cloudflare, что 404 страница тоже Edge
+export const runtime = 'edge';
+
 const playfair = Playfair_Display({
   subsets: ['latin', 'cyrillic'],
   variable: '--font-serif',
@@ -46,7 +49,6 @@ export default async function RootLayout({
     <html lang="ru" className={`${playfair.variable} ${inter.variable}`}>
       <body className="font-sans">
         <Header />
-        {/* Компонент корзины на месте */}
         <CartSlideOver /> 
         
         <main>{children}</main>
