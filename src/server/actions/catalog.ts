@@ -38,10 +38,14 @@ export async function createProduct(formData: FormData) {
   // Конвертация из гривен в копейки
   const price = Math.round(parseFloat(priceStr) * 100);
   const categoryId = parseInt(categoryIdStr, 10);
+  
+  // ⚡️ Генерируем уникальную ссылку (slug) на основе артикула
+  const slug = `p-${sku.toLowerCase()}-${Date.now()}`;
 
   await db.insert(products).values({
     title,
     sku,
+    slug, // ⚡️ Передаем сгенерированный slug в базу
     price,
     categoryId,
     description: description || null,
