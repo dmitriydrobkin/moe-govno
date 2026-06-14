@@ -16,7 +16,7 @@ export default async function CatalogPage() {
         <div>
           <h1 className="font-serif text-3xl mb-2">Управление каталогом</h1>
           <p className="font-sans text-sm text-chocolate/50">
-            Добавляйте новые категории и товары в магазин.
+            Добавляйте новые категории и товары с поддержкой галереи изображений.
           </p>
         </div>
         
@@ -27,9 +27,7 @@ export default async function CatalogPage() {
               <h2 className="font-serif text-xl mb-6">Новая категория</h2>
               <form action={createCategory} className="space-y-6">
                 <div>
-                  <label className="block text-xs font-sans uppercase tracking-widest text-chocolate/70 mb-1">
-                    Название категории
-                  </label>
+                  <label className="block text-xs font-sans uppercase tracking-widest text-chocolate/70 mb-1">Название категории</label>
                   <input
                     type="text"
                     name="title"
@@ -38,11 +36,8 @@ export default async function CatalogPage() {
                     className="w-full border border-chocolate/20 px-4 py-3 bg-transparent font-sans text-sm outline-none transition-colors focus:border-gold"
                   />
                 </div>
-                
                 <div>
-                  <label className="block text-xs font-sans uppercase tracking-widest text-chocolate/70 mb-1">
-                    Ссылка для сайта (Slug / URL)
-                  </label>
+                  <label className="block text-xs font-sans uppercase tracking-widest text-chocolate/70 mb-1">Ссылка для сайта (Slug / URL)</label>
                   <input
                     type="text"
                     name="slug"
@@ -52,17 +47,8 @@ export default async function CatalogPage() {
                     title="Используйте только маленькие латинские буквы, цифры и дефис"
                     className="w-full border border-chocolate/20 px-4 py-3 bg-transparent font-sans text-sm outline-none transition-colors focus:border-gold"
                   />
-                  <p className="mt-1 text-[11px] font-sans text-chocolate/50 leading-normal">
-                    * Часть адреса страницы. Пишется <strong>строго латиницей</strong>, без пробелов (вместо пробелов используйте дефис).
-                  </p>
                 </div>
-                
-                <SubmitButton
-                  defaultText="Добавить категорию"
-                  loadingText="Добавление..."
-                  successText="Создано!"
-                  className="btn-primary w-full mt-2"
-                />
+                <SubmitButton defaultText="Добавить kategoriю" className="btn-primary w-full mt-2" />
               </form>
             </div>
 
@@ -88,35 +74,37 @@ export default async function CatalogPage() {
             <div className="bg-cream p-8 shadow-sm border border-chocolate/5 h-full">
               <h2 className="font-serif text-xl mb-6">Новый товар</h2>
               <form action={createProduct} className="space-y-6">
+                
+                {/* ⚡️ ПОЛЕ ЗАГРУЗКИ ПАЧКИ ФОТОГРАФИЙ */}
+                <div className="mb-8 p-6 border border-dashed border-chocolate/20 bg-chocolate/5">
+                  <div className="flex justify-between items-center mb-2">
+                    <label className="block text-xs font-sans uppercase tracking-widest text-chocolate/70">Галерея изображений</label>
+                    <span className="text-[11px] font-sans text-chocolate/40">До 10 фотографий</span>
+                  </div>
+                  <input
+                    type="file"
+                    name="images" // ⚡️ Изменили имя на множественное число
+                    multiple     // ⚡️ Разрешили множественный выбор
+                    accept="image/png, image/jpeg, image/webp"
+                    className="w-full text-sm text-chocolate/70 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-chocolate file:text-cream hover:file:bg-chocolate/90 cursor-pointer"
+                  />
+                </div>
+
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-xs font-sans uppercase tracking-widest text-chocolate/70 mb-2">Название товара</label>
-                    <input
-                      type="text"
-                      name="title"
-                      required
-                      className="w-full border border-chocolate/20 px-4 py-3 bg-transparent font-sans text-sm outline-none transition-colors focus:border-gold"
-                    />
+                    <input type="text" name="title" required className="w-full border border-chocolate/20 px-4 py-3 bg-transparent font-sans text-sm outline-none transition-colors focus:border-gold" />
                   </div>
                   <div>
                     <label className="block text-xs font-sans uppercase tracking-widest text-chocolate/70 mb-2">Артикул (SKU)</label>
-                    <input
-                      type="text"
-                      name="sku"
-                      required
-                      className="w-full border border-chocolate/20 px-4 py-3 bg-transparent font-sans text-sm outline-none transition-colors focus:border-gold"
-                    />
+                    <input type="text" name="sku" required className="w-full border border-chocolate/20 px-4 py-3 bg-transparent font-sans text-sm outline-none transition-colors focus:border-gold" />
                   </div>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-xs font-sans uppercase tracking-widest text-chocolate/70 mb-2">Категория</label>
-                    <select
-                      name="categoryId"
-                      required
-                      className="w-full border border-chocolate/20 px-4 py-3 bg-cream font-sans text-sm outline-none transition-colors focus:border-gold"
-                    >
+                    <select name="categoryId" required className="w-full border border-chocolate/20 px-4 py-3 bg-cream font-sans text-sm outline-none transition-colors focus:border-gold">
                       <option value="">Выберите категорию...</option>
                       {categories.map((cat: Category) => (
                          <option key={cat.id} value={cat.id}>{cat.title}</option>
@@ -125,53 +113,28 @@ export default async function CatalogPage() {
                   </div>
                   <div>
                     <label className="block text-xs font-sans uppercase tracking-widest text-chocolate/70 mb-2">Цена (в гривнах)</label>
-                    <input
-                      type="number"
-                      step="0.01"
-                      name="price"
-                      required
-                      placeholder="0.00"
-                      className="w-full border border-chocolate/20 px-4 py-3 bg-transparent font-sans text-sm outline-none transition-colors focus:border-gold"
-                    />
+                    <input type="number" step="0.01" name="price" required placeholder="0.00" className="w-full border border-chocolate/20 px-4 py-3 bg-transparent font-sans text-sm outline-none transition-colors focus:border-gold" />
                   </div>
                 </div>
 
                 <div>
                   <label className="block text-xs font-sans uppercase tracking-widest text-chocolate/70 mb-2">Описание товара</label>
-                  <textarea
-                    name="description"
-                    rows={3}
-                    className="w-full border border-chocolate/20 px-4 py-3 bg-transparent font-sans text-sm outline-none transition-colors focus:border-gold resize-none"
-                  ></textarea>
+                  <textarea name="description" rows={3} className="w-full border border-chocolate/20 px-4 py-3 bg-transparent font-sans text-sm outline-none transition-colors focus:border-gold resize-none"></textarea>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-xs font-sans uppercase tracking-widest text-chocolate/70 mb-2">Вес / Объем</label>
-                    <input
-                      type="text"
-                      name="weightInfo"
-                      placeholder="Например: 500 г"
-                      className="w-full border border-chocolate/20 px-4 py-3 bg-transparent font-sans text-sm outline-none transition-colors focus:border-gold"
-                    />
+                    <input type="text" name="weightInfo" placeholder="Например: 500 г" className="w-full border border-chocolate/20 px-4 py-3 bg-transparent font-sans text-sm outline-none transition-colors focus:border-gold" />
                   </div>
                   <div>
-                    <label className="block text-xs font-sans uppercase tracking-widest text-chocolate/70 mb-2">Ингредиенты (через запятую)</label>
-                    <input
-                      type="text"
-                      name="ingredients"
-                      className="w-full border border-chocolate/20 px-4 py-3 bg-transparent font-sans text-sm outline-none transition-colors focus:border-gold"
-                    />
+                    <label className="block text-xs font-sans uppercase tracking-widest text-chocolate/70 mb-2">Ингредиенты</label>
+                    <input type="text" name="ingredients" className="w-full border border-chocolate/20 px-4 py-3 bg-transparent font-sans text-sm outline-none transition-colors focus:border-gold" />
                   </div>
                 </div>
 
                 <div className="pt-2">
-                  <SubmitButton
-                    defaultText="Добавить товар"
-                    loadingText="Добавление..."
-                    successText="Товар добавлен!"
-                    className="btn-primary w-full"
-                  />
+                  <SubmitButton defaultText="Сохранить товар с галереей" loadingText="Загрузка фото в R2..." successText="Товар добавлен!" className="btn-primary w-full" />
                 </div>
               </form>
             </div>
@@ -188,6 +151,7 @@ export default async function CatalogPage() {
               <table className="w-full text-left font-sans text-sm border-collapse">
                 <thead>
                   <tr className="border-b border-chocolate/20 text-xs uppercase tracking-widest text-chocolate/70">
+                    <th className="py-4 px-2 font-normal w-16">Фото</th>
                     <th className="py-4 px-2 font-normal">SKU</th>
                     <th className="py-4 px-2 font-normal">Название</th>
                     <th className="py-4 px-2 font-normal">Категория</th>
@@ -197,8 +161,20 @@ export default async function CatalogPage() {
                 <tbody>
                   {products.map((prod: Product) => {
                     const catTitle = categories.find((c: Category) => c.id === prod.categoryId)?.title || 'Неизвестно';
+                    
+                    // ⚡️ Разбиваем строку ссылок обратно на массив, чтобы взять первую
+                    const allImages = prod.imageUrl ? prod.imageUrl.split(',') : [];
+                    const firstImage = allImages[0] || null;
+
                     return (
                       <tr key={prod.id} className="border-b border-chocolate/5 hover:bg-chocolate/5 transition-colors">
+                        <td className="py-3 px-2">
+                          {firstImage ? (
+                            <img src={firstImage} alt={prod.title} className="w-12 h-12 object-cover border border-chocolate/10" />
+                          ) : (
+                            <div className="w-12 h-12 bg-chocolate/5 flex items-center justify-center text-xs text-chocolate/30 border border-chocolate/10">Нет</div>
+                          )}
+                        </td>
                         <td className="py-4 px-2 text-chocolate/70">{prod.sku}</td>
                         <td className="py-4 px-2 font-medium">{prod.title}</td>
                         <td className="py-4 px-2 text-chocolate/70">{catTitle}</td>
