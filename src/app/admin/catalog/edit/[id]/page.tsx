@@ -20,7 +20,8 @@ export default async function EditProductPage({ params }: { params: { id: string
 
   if (!product) notFound();
 
-  const imagesArray = product.imageUrl ? product.imageUrl.split(',') : [];
+  // Строго указываем тип массива как string[]
+  const imagesArray: string[] = product.imageUrl ? product.imageUrl.split(',') : [];
 
   return (
     <div className="min-h-screen bg-cream-dark py-16 text-chocolate px-4">
@@ -43,7 +44,8 @@ export default async function EditProductPage({ params }: { params: { id: string
             <p className="block text-xs font-sans uppercase tracking-widest text-chocolate/70 mb-4">Текущие фотографии</p>
             {imagesArray.length > 0 ? (
               <div className="flex gap-4 mb-4 flex-wrap">
-                {imagesArray.map((url, i) => (
+                {/* ⚡️ ИСПРАВЛЕНИЕ: Добавили строгие типы для map */}
+                {imagesArray.map((url: string, i: number) => (
                   <img key={i} src={url} alt="" className="w-20 h-20 object-cover border border-chocolate/20 shadow-sm bg-white" />
                 ))}
               </div>
