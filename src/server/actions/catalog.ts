@@ -32,7 +32,9 @@ export async function createProduct(formData: FormData) {
   const weightInfo = formData.get('weightInfo')?.toString();
   const ingredients = formData.get('ingredients')?.toString();
   
-  // Достаем МАССИВ файлов из инпута
+  // ⚡️ Проверяем галочку бестселлера
+  const isBestseller = formData.get('isBestseller') === 'on';
+
   const imageFiles = formData.getAll('images') as File[];
 
   if (!title || !sku || !priceStr || !categoryIdStr) {
@@ -67,6 +69,7 @@ export async function createProduct(formData: FormData) {
     weightInfo: weightInfo || null,
     ingredients: ingredients || null,
     imageUrl: imageUrls.length > 0 ? imageUrls.join(',') : null, 
+    isBestseller, // ⚡️ Сохраняем статус бестселлера в базу
   });
 }
 
