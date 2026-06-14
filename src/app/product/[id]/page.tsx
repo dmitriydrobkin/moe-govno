@@ -6,6 +6,7 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { AddToCartSection } from '@/components/AddToCartButton';
+import { ProductGallery } from '@/components/ProductGallery'; // ⚡️ Подключаем наш новый слайдер со стрелочками
 import { getProductById } from '@/server/functions/products';
 import { getCategories } from '@/server/functions/categories';
 import { formatPrice } from '@/lib/format';
@@ -36,7 +37,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
   const category = categories.find((c: Category) => c.id === product.categoryId);
   
-  // ⚡️ Превращаем строку с картинками из базы в нормальный массив и строго указываем тип: string[]
+  // Строго указываем тип массива
   const imagesArray: string[] = product.imageUrl ? product.imageUrl.split(',') : [];
 
   return (
@@ -66,59 +67,13 @@ export default async function ProductPage({ params }: ProductPageProps) {
       {/* Двухколоночный layout */}
       <div className="grid grid-cols-1 gap-12 lg:grid-cols-2 lg:gap-20">
         
-        {/* ЛЕВАЯ КОЛОНКА — ФОТО ИЛИ СЛАЙДЕР */}
+        {/* ⚡️ ЛЕВАЯ КОЛОНКА — ВЫЗЫВАЕМ НАШ КЛИЕНТСКИЙ СЛАЙДЕР СО СТРЕЛКАМИ */}
         <div className="animate-fade-in">
-          {imagesArray.length === 0 ? (
-            // Если фото нет — показываем заглушку
-            <div className="w-full aspect-square bg-chocolate/5 border border-chocolate/10 flex items-center justify-center text-chocolate/30 font-sans text-sm">
-              Нет фотографии
-            </div>
-          ) : imagesArray.length === 1 ? (
-            // Если фото ОДНО — выводим статично
-            <div className="relative w-full aspect-square">
-              <img 
-                src={imagesArray[0]} 
-                alt={product.title} 
-                className="w-full h-full object-cover border border-chocolate/10 shadow-sm" 
-              />
-              {product.isBestseller && (
-                <span className="absolute left-6 top-6 bg-chocolate/90 px-4 py-2 font-sans text-xs uppercase tracking-widest text-gold z-10">
-                  Бестселлер
-                </span>
-              )}
-            </div>
-          ) : (
-            // ⚡️ СЛАЙДЕР, ЕСЛИ ФОТО БОЛЬШЕ 1
-            <div className="relative group">
-              <div className="w-full aspect-square flex overflow-x-auto snap-x snap-mandatory scrollbar-none scroll-smooth border border-chocolate/10 shadow-sm">
-                
-                {/* ⚡️ Добавлены строгие типы: url: string, index: number */}
-                {imagesArray.map((url: string, index: number) => (
-                  <div 
-                    key={index} 
-                    className="w-full aspect-square flex-shrink-0 snap-start snap-always relative"
-                  >
-                    <img 
-                      src={url} 
-                      alt={`${product.title} - ракурс ${index + 1}`} 
-                      className="w-full h-full object-cover" 
-                    />
-                    {product.isBestseller && index === 0 && (
-                      <span className="absolute left-6 top-6 bg-chocolate/90 px-4 py-2 font-sans text-xs uppercase tracking-widest text-gold z-10">
-                        Бестселлер
-                      </span>
-                    )}
-                  </div>
-                ))}
-
-              </div>
-              
-              {/* Подсказка для слайдера */}
-              <div className="absolute bottom-4 right-4 bg-chocolate/80 text-cream px-3 py-1 text-xs font-sans uppercase tracking-wider backdrop-blur-sm rounded pointer-events-none">
-                Листайте ракурсы ↔
-              </div>
-            </div>
-          )}
+          <ProductGallery 
+            images={imagesArray} 
+            title={product.title} 
+            isBestseller={product.isBestseller} 
+          />
         </div>
 
         {/* ПРАВАЯ КОЛОНКА — ДЕТАЛИ */}

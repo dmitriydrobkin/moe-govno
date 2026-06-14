@@ -1,55 +1,51 @@
 'use client';
 
 import { useFormStatus } from 'react-dom';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface SubmitButtonProps {
   defaultText?: string;
   loadingText?: string;
   successText?: string;
   className?: string;
+  children?: React.ReactNode;
 }
 
 export function SubmitButton({
   defaultText = 'Сохранить',
-  loadingText = 'Сохраняем...',
-  successText = 'Сохранено!',
-  // Базовые стили под твой дизайн (цвета из твоего layout.tsx)
-  className = 'bg-chocolate text-cream px-6 py-3 text-sm uppercase tracking-wider font-sans transition-colors hover:bg-chocolate/90 disabled:opacity-50 disabled:cursor-not-allowed',
+  loadingText = 'Сохранение...',
+  successText = '✅ Успешно',
+  className = '',
+  children,
 }: SubmitButtonProps) {
-  // Хук Next.js, который магия обратного вызова привязывает к родительской <form>
   const { pending } = useFormStatus();
-  
-  const [showSuccess, setShowSuccess] = useState(false);
-  const wasPending = useRef(false);
+  const [success, setSuccess] = useState(false);
 
   useEffect(() => {
-    // Если форма БЫЛА в процессе отправки, а теперь НЕТ — значит, всё сохранилось
-    if (wasPending.current && !pending) {
-      setShowSuccess(true);
-      // Показываем галочку 3 секунды, затем возвращаем обычный текст
-      const timer = setTimeout(() => setShowSuccess(false), 3000);
-      return () => clearTimeout(timer);
+    let timeout: NodeJS.Timeout;
+    if (!pending && success) {
+      timeout = setTimeout(() => { setSuccess(false); }, 3000);
     }
-    wasPending.current = pending;
-  }, [pending]);
+    if (pending) { setSuccess(true); }
+    return () => clearTimeout(timeout);
+  }, [pending, success]);
 
   return (
     <button
       type="submit"
       disabled={pending}
-      className={className}
+      // ⚡️ Убрали агрессивную смену цветов на желтый, теперь всё по дизайну
+      className={`${className} transition-all duration-300 disabled:opacity-70 flex items-center justify-center`}
     >
       {pending ? (
-        <span className="flex items-center justify-center gap-2">
-          ⏳ {loadingText}
+        <span className="flex items-center gap-2">
+          <span className="h-4 w-4 animate-spin rounded-full border-2 border-cream border-t-transparent" />
+          {loadingText}
         </span>
-      ) : showSuccess ? (
-        <span className="flex items-center justify-center gap-2 text-gold">
-          ✅ {successText}
-        </span>
+      ) : success && !pending ? (
+        successText
       ) : (
-        <span>{defaultText}</span>
+        children || defaultText
       )}
     </button>
   );
