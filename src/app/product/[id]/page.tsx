@@ -36,8 +36,8 @@ export default async function ProductPage({ params }: ProductPageProps) {
 
   const category = categories.find((c: Category) => c.id === product.categoryId);
   
-  // ⚡️ Превращаем строку с картинками из базы в нормальный массив
-  const imagesArray = product.imageUrl ? product.imageUrl.split(',') : [];
+  // ⚡️ Превращаем строку с картинками из базы в нормальный массив и строго указываем тип: string[]
+  const imagesArray: string[] = product.imageUrl ? product.imageUrl.split(',') : [];
 
   return (
     <div className="mx-auto max-w-7xl px-6 py-16 lg:px-8">
@@ -91,7 +91,9 @@ export default async function ProductPage({ params }: ProductPageProps) {
             // ⚡️ СЛАЙДЕР, ЕСЛИ ФОТО БОЛЬШЕ 1
             <div className="relative group">
               <div className="w-full aspect-square flex overflow-x-auto snap-x snap-mandatory scrollbar-none scroll-smooth border border-chocolate/10 shadow-sm">
-                {imagesArray.map((url, index) => (
+                
+                {/* ⚡️ Добавлены строгие типы: url: string, index: number */}
+                {imagesArray.map((url: string, index: number) => (
                   <div 
                     key={index} 
                     className="w-full aspect-square flex-shrink-0 snap-start snap-always relative"
@@ -108,6 +110,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
                     )}
                   </div>
                 ))}
+
               </div>
               
               {/* Подсказка для слайдера */}
