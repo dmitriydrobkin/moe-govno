@@ -1,4 +1,4 @@
-import Link from 'next/link'; // ⚡️ Добавили импорт Link для сброса фильтров
+import Link from 'next/link';
 import { SubmitButton } from '@/components/SubmitButton';
 import { DeleteButton } from '@/components/DeleteButton';
 import { ImageUploadInput } from '@/components/ImageUploadInput';
@@ -85,7 +85,7 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
                 </div>
                 
                 <SubmitButton
-                  defaultText="Добавить категория"
+                  defaultText="Добавить категорию"
                   loadingText="Добавление..."
                   successText="Создано!"
                   className="btn-primary w-full mt-2"
@@ -127,7 +127,9 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-xs font-sans uppercase tracking-widest text-chocolate/70 mb-2">Название товара</label>
+                    <label className="block text-xs font-sans uppercase tracking-widest text-chocolate/70 mb-2">
+                      Название товара
+                    </label>
                     <input
                       type="text"
                       name="title"
@@ -136,7 +138,9 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-sans uppercase tracking-widest text-chocolate/70 mb-2">Артикул (SKU)</label>
+                    <label className="block text-xs font-sans uppercase tracking-widest text-chocolate/70 mb-2">
+                      Артикул (SKU)
+                    </label>
                     <input
                       type="text"
                       name="sku"
@@ -148,7 +152,9 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-xs font-sans uppercase tracking-widest text-chocolate/70 mb-2">Категория</label>
+                    <label className="block text-xs font-sans uppercase tracking-widest text-chocolate/70 mb-2">
+                      Категория
+                    </label>
                     <select
                       name="categoryId"
                       required
@@ -161,7 +167,9 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-xs font-sans uppercase tracking-widest text-chocolate/70 mb-2">Цена (в гривнах)</label>
+                    <label className="block text-xs font-sans uppercase tracking-widest text-chocolate/70 mb-2">
+                      Цена (в гривнах)
+                    </label>
                     <input
                       type="number"
                       step="0.01"
@@ -187,7 +195,9 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-sans uppercase tracking-widest text-chocolate/70 mb-2">Описание товара</label>
+                  <label className="block text-xs font-sans uppercase tracking-widest text-chocolate/70 mb-2">
+                    Описание товара
+                  </label>
                   <textarea
                     name="description"
                     rows={3}
@@ -197,7 +207,9 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-xs font-sans uppercase tracking-widest text-chocolate/70 mb-2">Вес / Объем</label>
+                    <label className="block text-xs font-sans uppercase tracking-widest text-chocolate/70 mb-2">
+                      Вес / Объем
+                    </label>
                     <input
                       type="text"
                       name="weightInfo"
@@ -206,7 +218,9 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-sans uppercase tracking-widest text-chocolate/70 mb-2">Ингредиенты (через запятую)</label>
+                    <label className="block text-xs font-sans uppercase tracking-widest text-chocolate/70 mb-2">
+                      Ингредиенты (через запятую)
+                    </label>
                     <input
                       type="text"
                       name="ingredients"
@@ -238,7 +252,9 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
           {/* ⚡️ УДОБНАЯ ПАНЕЛЬ НАВИГАЦИИ И ПОИСКА */}
           <form method="GET" className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8 bg-cream-dark/40 p-4 border border-chocolate/10 items-end">
             <div>
-              <label className="block text-[10px] font-sans uppercase tracking-widest text-chocolate/60 mb-2">Поиск по названию / SKU</label>
+              <label className="block text-[10px] font-sans uppercase tracking-widest text-chocolate/60 mb-2">
+                Поиск по названию / SKU
+              </label>
               <input
                 type="text"
                 name="search"
@@ -248,7 +264,9 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
               />
             </div>
             <div>
-              <label className="block text-[10px] font-sans uppercase tracking-widest text-chocolate/60 mb-2">Раздел каталога</label>
+              <label className="block text-[10px] font-sans uppercase tracking-widest text-chocolate/60 mb-2">
+                Раздел каталога
+              </label>
               <select
                 name="category"
                 defaultValue={searchParams.category || ''}
@@ -314,10 +332,17 @@ export default async function CatalogPage({ searchParams }: CatalogPageProps) {
                         </td>
                         <td className="py-4 px-2 text-right font-medium">{(prod.price / 100).toFixed(2)} ₴</td>
                         <td className="py-4 px-2 text-right">
-                          <form action={deleteProduct}>
-                            <input type="hidden" name="id" value={prod.id} />
-                            <DeleteButton />
-                          </form>
+                          <div className="flex items-center justify-end gap-3">
+                            {/* ⚡️ КНОПКА ИЗМЕНИТЬ */}
+                            <Link href={`/admin/catalog/edit/${prod.id}`} className="text-[11px] font-semibold uppercase tracking-widest text-chocolate/40 hover:text-gold transition-colors">
+                              Изменить
+                            </Link>
+                            {/* ⚡️ КНОПКА УДАЛИТЬ */}
+                            <form action={deleteProduct}>
+                              <input type="hidden" name="id" value={prod.id} />
+                              <DeleteButton />
+                            </form>
+                          </div>
                         </td>
                       </tr>
                     )
