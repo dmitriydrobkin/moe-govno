@@ -1,22 +1,17 @@
-/**
- * Утилиты форматирования цен и текста для UI магазина.
- * Совместимы с Edge Runtime — без Node.js API.
- */
+export function formatPrice(priceInKopecks: number): string {
+  // ⚡️ Превращаем копейки обратно в гривны
+  const price = priceInKopecks / 100; 
 
-/** Форматирование цены в гривнах с разделителями тысяч */
-export function formatPrice(price: number): string {
   return new Intl.NumberFormat('uk-UA', {
     style: 'currency',
     currency: 'UAH',
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
+    // Если цена без копеек (например 100.00), то нули после запятой не пишем
+    minimumFractionDigits: price % 1 === 0 ? 0 : 2, 
+    maximumFractionDigits: 2,
   }).format(price);
 }
 
-/** Заглушка изображения, если imageUrl отсутствует в БД */
-export function getProductImageUrl(imageUrl: string | null | undefined): string {
-  return (
-    imageUrl ??
-    'https://images.unsplash.com/photo-1481391319762-47dff72954d9?w=800&q=80'
-  );
+// Утилита для подстраховки пустых картинок
+export function getProductImageUrl(url?: string | null): string {
+  return url || 'https://images.unsplash.com/photo-1481391319762-47dff72954d9?w=800&q=80';
 }
