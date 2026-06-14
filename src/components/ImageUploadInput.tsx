@@ -2,39 +2,49 @@
 
 import { useState, useRef } from 'react';
 
+// Максимальный размер одного фото в мегабайтах (лимит Cloudflare Workers)
+const MAX_FILE_SIZE_MB = 3;
+
 export function ImageUploadInput() {
   const [files, setFiles] = useState<File[]>([]);
   const [previews, setPreviews] = useState<string[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // ⚡️ Функция синхронизации видимых фоток и скрытого инпута формы
   const syncFiles = (newFiles: File[]) => {
-    if (newFiles.length > 10) {
-      alert('Максимум 10 фотографий!');
-      newFiles = newFiles.slice(0, 10);
-    }
-    setFiles(newFiles);
+    // ⚡️ Фильтруем слишком тяжелые файлы, чтобы не положить сервер Cloudflare
+    const validFiles = newFiles.filter(file => {
+      if (file.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
+        alert(`❌ Файл "${file.name}" слишком тяжелый! Максимум ${MAX_FILE_SIZE_MB} МБ. Сожмите фото перед загрузкой.`);
+        return false;
+      }
+      return true;
+    });
 
-    // Обновляем картинки на экране
-    const newPreviews = newFiles.map(file => URL.createObjectURL(file));
+    if (validFiles.length > 10) {
+      alert('Можно загрузить максимум 10 фотографий!');
+      validFiles.splice(10); // Обрезаем лишнее
+    }
+    
+    setFiles(validFiles);
+
+    // Обновляем превью
+    const newPreviews = validFiles.map(file => URL.createObjectURL(file));
     setPreviews(newPreviews);
 
-    // Подкидываем склеенные файлы в настоящий <input>, чтобы сервер их увидел
+    // Подменяем файлы в скрытом инпуте для сервера
     if (inputRef.current) {
       const dataTransfer = new DataTransfer();
-      newFiles.forEach(f => dataTransfer.items.add(f));
+      validFiles.forEach(f => dataTransfer.items.add(f));
       inputRef.current.files = dataTransfer.files;
     }
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = Array.from(e.target.files || []);
-    // Добавляем НОВЫЕ файлы к СТАРЫМ
     syncFiles([...files, ...selectedFiles]);
   };
 
   const removeFile = (index: number) => {
-    // Удаляем один файл по клику на крестик
     const newFiles = files.filter((_, i) => i !== index);
     syncFiles(newFiles);
   };
@@ -42,7 +52,7 @@ export function ImageUploadInput() {
   return (
     <div className="mb-8 p-6 border border-dashed border-chocolate/30 bg-chocolate/5 hover:bg-chocolate/10 transition-colors">
       <label className="block text-xs font-sans uppercase tracking-widest text-chocolate/70 mb-2">
-        Фотографии товара (до 10 шт.)
+        Фотографии товара (до 10 шт. | макс {MAX_FILE_SIZE_MB} МБ на фото)
       </label>
       
       <input
@@ -55,12 +65,11 @@ export function ImageUploadInput() {
         className="w-full text-sm text-chocolate/70 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-chocolate file:text-cream hover:file:bg-chocolate/90 cursor-pointer mb-4"
       />
 
-      {/* Сетка с превьюшками и крестиками */}
       {previews.length > 0 && (
         <div className="flex flex-wrap gap-4 mt-2">
           {previews.map((src, idx) => (
             <div key={idx} className="relative w-24 h-24 border border-chocolate/20 group shadow-sm">
-              <img src={src} alt={`Preview ${idx}`} className="w-full h-full object-cover" />
+              <img src={src} alt={`Preview ${idx}`} className="w-full h-full object-cover bg-white" />
               
               {idx === 0 && (
                 <span className="absolute bottom-0 left-0 w-full text-center bg-gold/90 backdrop-blur-sm text-cream text-[10px] py-1 z-10 font-medium tracking-widest uppercase">
@@ -68,7 +77,6 @@ export function ImageUploadInput() {
                 </span>
               )}
               
-              {/* ⚡️ Крестик для удаления */}
               <button
                 type="button"
                 onClick={() => removeFile(idx)}
@@ -82,7 +90,7 @@ export function ImageUploadInput() {
         </div>
       )}
       <p className="mt-4 text-[11px] font-sans text-chocolate/50 leading-normal">
-        * Вы можете нажимать "Выберите файлы" несколько раз. Файлы будут добавляться к списку.
+        * Пожалуйста, сжимайте фотографии перед загрузкой (оптимальный вес фото для сайта — до 500 КБ).
       </p>
     </div>
   );

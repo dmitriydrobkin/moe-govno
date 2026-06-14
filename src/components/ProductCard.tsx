@@ -14,7 +14,9 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product, index = 0 }: ProductCardProps) {
-  const imageUrl = getProductImageUrl(product.imageUrl);
+  // ⚡️ ИСПРАВЛЕНИЕ: Берем только ПЕРВУЮ картинку, если их несколько
+  const firstImage = product.imageUrl ? product.imageUrl.split(',')[0] : null;
+  const imageUrl = getProductImageUrl(firstImage);
 
   return (
     <article
@@ -22,7 +24,6 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
       style={{ animationDelay: `${index * 80}ms` }}
     >
       <Link href={`/product/${product.id}`} className="block">
-        {/* Контейнер изображения с overflow для zoom-эффекта */}
         <div className="relative aspect-[4/5] overflow-hidden bg-cream-dark">
           <Image
             src={imageUrl}
@@ -32,14 +33,12 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
             sizes="(max-width: 768px) 100vw, 33vw"
           />
 
-          {/* Бейдж бестселлера */}
           {product.isBestseller && (
             <span className="absolute left-4 top-4 bg-chocolate/90 px-3 py-1 font-sans text-[10px] uppercase tracking-widest text-gold">
               Бестселлер
             </span>
           )}
 
-          {/* Индикатор отсутствия на складе */}
           {!product.inStock && (
             <span className="absolute inset-0 flex items-center justify-center bg-chocolate/60 font-sans text-xs uppercase tracking-widest text-cream">
               Нет в наличии
@@ -47,7 +46,6 @@ export function ProductCard({ product, index = 0 }: ProductCardProps) {
           )}
         </div>
 
-        {/* Информация о товаре */}
         <div className="mt-5 space-y-2">
           <h3 className="font-serif text-xl font-light text-chocolate transition-colors duration-300 group-hover:text-gold">
             {product.title}

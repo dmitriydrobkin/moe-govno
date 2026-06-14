@@ -11,7 +11,6 @@ interface ProductGalleryProps {
 export function ProductGallery({ images, title, isBestseller }: ProductGalleryProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // ⚡️ Функция скроллинга по стрелочкам
   const scroll = (direction: 'left' | 'right') => {
     if (scrollRef.current) {
       const scrollAmount = scrollRef.current.clientWidth;
@@ -62,17 +61,16 @@ export function ProductGallery({ images, title, isBestseller }: ProductGalleryPr
         ))}
       </div>
       
-      {/* ⚡️ Стрелки для ПК */}
+      {/* ⚡️ Стрелки теперь всегда видны на ПК */}
       <button 
         onClick={() => scroll('left')} 
-        className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-cream/90 backdrop-blur text-chocolate rounded-full items-center justify-center shadow-md hover:bg-cream transition-all opacity-0 group-hover:opacity-100 hidden md:flex text-xl z-20"
+        className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-cream/90 backdrop-blur text-chocolate rounded-full items-center justify-center shadow-md hover:bg-cream hover:scale-110 transition-all hidden md:flex text-xl z-20"
       >←</button>
       <button 
         onClick={() => scroll('right')} 
-        className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-cream/90 backdrop-blur text-chocolate rounded-full items-center justify-center shadow-md hover:bg-cream transition-all opacity-0 group-hover:opacity-100 hidden md:flex text-xl z-20"
+        className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-cream/90 backdrop-blur text-chocolate rounded-full items-center justify-center shadow-md hover:bg-cream hover:scale-110 transition-all hidden md:flex text-xl z-20"
       >→</button>
 
-      {/* Подсказка для мобильных (там стрелки скрыты, свайпать удобнее пальцем) */}
       <div className="absolute bottom-4 right-4 bg-chocolate/80 text-cream px-3 py-1 text-xs font-sans uppercase tracking-wider backdrop-blur-sm rounded pointer-events-none md:hidden shadow-sm z-20">
         Листайте ↔
       </div>
