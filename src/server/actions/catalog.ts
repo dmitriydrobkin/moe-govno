@@ -3,7 +3,7 @@
 import { getRequestContext } from '@cloudflare/next-on-pages';
 import { drizzle } from 'drizzle-orm/d1';
 import { categories, products } from '@/server/db/schema';
-import { uploadToR2 } from '@/server/functions/r2'; // ⚡️ Подключили нашу утилиту
+import { uploadToR2 } from '@/server/functions/r2';
 
 export async function createCategory(formData: FormData) {
   const { env } = getRequestContext();
@@ -34,29 +34,37 @@ export async function createProduct(formData: FormData) {
   const weightInfo = formData.get('weightInfo')?.toString();
   const ingredients = formData.get('ingredients')?.toString();
   
-  // ⚡️ Достаем файл картинки из формы
-  const imageFile = formData.get('image') as File | null;
+  // ⚡️ Извлекаем ВСЕ загруженные файлы (массив) вместо одного
+  const imageFiles = formData.getAll('images') as File[];
 
   if (!title || !sku || !priceStr || !categoryIdStr) {
     throw new Error('Заполните все обязательные поля');
   }
 
-  let imageUrl = null;
+  const uploadedUrls: string[] = [];
 
-  // ⚡️ Если кондитер загрузил фото, отправляем его в Cloudflare R2
-  if (imageFile && imageFile.size > 0) {
-    const uploadResult = await uploadToR2(imageFile);
-    if (!uploadResult.success) {
-      throw new Error(`Ошибка загрузки фото: ${uploadResult.error}`);
+  // ⚡️ Циклом проходим по всем файлам (ограничим до 10 на уровне UI)
+  if (imageFiles && imageFiles.length > 0) {
+    for (const file of imageFiles) {
+      if (file.size > 0) {
+        const uploadResult = await uploadToR2(file);
+        if (!uploadResult.success) {
+          throw new Error(`Ошибка загрузки фото: ${uploadResult.error}`);
+        }
+        if (uploadResult.url) {
+          uploadedUrls.push(uploadResult.url);
+        }
+      }
     }
-    imageUrl = uploadResult.url; // Получаем готовую ссылку!
   }
+
+  // Склеиваем ссылки через запятую в одну строку, если они есть
+  const imageUrlsString = uploadedUrls.length > 0 ? uploadedUrls.join(',') : null;
 
   const price = Math.round(parseFloat(priceStr) * 100);
   const categoryId = parseInt(categoryIdStr, 10);
   const slug = `p-${sku.toLowerCase()}-${Date.now()}`;
 
-  // ⚡️ Сохраняем товар с новой ссылкой на фото
   await db.insert(products).values({
     title,
     sku,
@@ -66,6 +74,6 @@ export async function createProduct(formData: FormData) {
     description: description || null,
     weightInfo: weightInfo || null,
     ingredients: ingredients || null,
-    imageUrl: imageUrl, 
+    imageUrl: imageUrlsString, // Записываем строку с пачкой ссылок
   });
 }
