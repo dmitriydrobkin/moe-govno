@@ -1,5 +1,7 @@
 import { SubmitButton } from '@/components/SubmitButton';
-import { createCategory, createProduct } from '@/server/actions/catalog';
+import { DeleteButton } from '@/components/DeleteButton';
+import { ImageUploadInput } from '@/components/ImageUploadInput';
+import { createCategory, createProduct, deleteCategory, deleteProduct } from '@/server/actions/catalog';
 import { getCategories, getProducts } from '@/server/functions/catalog';
 import type { Category, Product } from '@/server/db/schema';
 
@@ -16,7 +18,11 @@ export default async function CatalogPage() {
         <div>
           <h1 className="font-serif text-3xl mb-2">Управление каталогом</h1>
           <p className="font-sans text-sm text-chocolate/50">
+<<<<<<< Updated upstream
             Добавляйте новые категории и товары с поддержкой галереи изображений.
+=======
+            Добавляйте новые категории и товары с галереей фотографий.
+>>>>>>> Stashed changes
           </p>
         </div>
         
@@ -47,6 +53,12 @@ export default async function CatalogPage() {
                     title="Используйте только маленькие латинские буквы, цифры и дефис"
                     className="w-full border border-chocolate/20 px-4 py-3 bg-transparent font-sans text-sm outline-none transition-colors focus:border-gold"
                   />
+<<<<<<< Updated upstream
+=======
+                  <p className="mt-1 text-[11px] font-sans text-chocolate/50 leading-normal">
+                    * Часть адреса страницы. Пишется <strong>строго латиницей</strong>, без пробелов.
+                  </p>
+>>>>>>> Stashed changes
                 </div>
                 <SubmitButton defaultText="Добавить kategoriю" className="btn-primary w-full mt-2" />
               </form>
@@ -59,9 +71,16 @@ export default async function CatalogPage() {
               ) : (
                 <ul className="space-y-3">
                   {categories.map((cat: Category) => (
-                    <li key={cat.id} className="text-sm font-sans flex justify-between items-center border-b border-chocolate/10 pb-3">
-                      <span className="font-medium">{cat.title}</span>
-                      <span className="text-chocolate/50 text-xs bg-chocolate/5 px-2 py-1 rounded">/{cat.slug}</span>
+                    <li key={cat.id} className="text-sm font-sans flex justify-between items-center border-b border-chocolate/10 pb-2">
+                      <div>
+                        <span className="font-medium mr-2">{cat.title}</span>
+                        <span className="text-chocolate/50 text-xs bg-chocolate/5 px-2 py-1 rounded">/{cat.slug}</span>
+                      </div>
+                      {/* ⚡️ Форма удаления категории */}
+                      <form action={deleteCategory}>
+                        <input type="hidden" name="id" value={cat.id} />
+                        <DeleteButton />
+                      </form>
                     </li>
                   ))}
                 </ul>
@@ -73,8 +92,10 @@ export default async function CatalogPage() {
           <div className="lg:col-span-2">
             <div className="bg-cream p-8 shadow-sm border border-chocolate/5 h-full">
               <h2 className="font-serif text-xl mb-6">Новый товар</h2>
+              
               <form action={createProduct} className="space-y-6">
                 
+<<<<<<< Updated upstream
                 {/* ⚡️ ПОЛЕ ЗАГРУЗКИ ПАЧКИ ФОТОГРАФИЙ */}
                 <div className="mb-8 p-6 border border-dashed border-chocolate/20 bg-chocolate/5">
                   <div className="flex justify-between items-center mb-2">
@@ -89,6 +110,10 @@ export default async function CatalogPage() {
                     className="w-full text-sm text-chocolate/70 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-chocolate file:text-cream hover:file:bg-chocolate/90 cursor-pointer"
                   />
                 </div>
+=======
+                {/* ⚡️ ВСТАВЛЯЕМ НАШ НОВЫЙ ИНПУТ С ПРЕВЬЮШКАМИ */}
+                <ImageUploadInput />
+>>>>>>> Stashed changes
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
@@ -134,7 +159,16 @@ export default async function CatalogPage() {
                 </div>
 
                 <div className="pt-2">
+<<<<<<< Updated upstream
                   <SubmitButton defaultText="Сохранить товар с галереей" loadingText="Загрузка фото в R2..." successText="Товар добавлен!" className="btn-primary w-full" />
+=======
+                  <SubmitButton
+                    defaultText="Сохранить товар в каталог"
+                    loadingText="Загрузка фотографий..."
+                    successText="Товар сохранен!"
+                    className="btn-primary w-full"
+                  />
+>>>>>>> Stashed changes
                 </div>
               </form>
             </div>
@@ -156,16 +190,23 @@ export default async function CatalogPage() {
                     <th className="py-4 px-2 font-normal">Название</th>
                     <th className="py-4 px-2 font-normal">Категория</th>
                     <th className="py-4 px-2 font-normal text-right">Цена (грн)</th>
+                    <th className="py-4 px-2 font-normal w-10"></th>
                   </tr>
                 </thead>
                 <tbody>
                   {products.map((prod: Product) => {
                     const catTitle = categories.find((c: Category) => c.id === prod.categoryId)?.title || 'Неизвестно';
                     
+<<<<<<< Updated upstream
                     // ⚡️ Разбиваем строку ссылок обратно на массив, чтобы взять первую
                     const allImages = prod.imageUrl ? prod.imageUrl.split(',') : [];
                     const firstImage = allImages[0] || null;
 
+=======
+                    // ⚡️ Извлекаем только первую (главную) картинку для таблицы
+                    const firstImage = prod.imageUrl ? prod.imageUrl.split(',')[0] : null;
+                    
+>>>>>>> Stashed changes
                     return (
                       <tr key={prod.id} className="border-b border-chocolate/5 hover:bg-chocolate/5 transition-colors">
                         <td className="py-3 px-2">
@@ -179,6 +220,13 @@ export default async function CatalogPage() {
                         <td className="py-4 px-2 font-medium">{prod.title}</td>
                         <td className="py-4 px-2 text-chocolate/70">{catTitle}</td>
                         <td className="py-4 px-2 text-right">{(prod.price / 100).toFixed(2)} ₴</td>
+                        <td className="py-4 px-2 text-right">
+                          {/* ⚡️ Форма удаления товара */}
+                          <form action={deleteProduct}>
+                            <input type="hidden" name="id" value={prod.id} />
+                            <DeleteButton />
+                          </form>
+                        </td>
                       </tr>
                     )
                   })}
